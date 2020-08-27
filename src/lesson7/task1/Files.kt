@@ -16,32 +16,35 @@ import java.io.File
  * их следует сохранить и в выходном файле
  */
 fun alignFile(inputName: String, lineLength: Int, outputName: String) {
-    val outputStream = File(outputName).bufferedWriter()
+    val writer = File(outputName).bufferedWriter()
     var currentLineLength = 0
+    fun append(word: String) {
+        if (currentLineLength > 0) {
+            if (word.length + currentLineLength >= lineLength) {
+                writer.newLine()
+                currentLineLength = 0
+            } else {
+                writer.write(" ")
+                currentLineLength++
+            }
+        }
+        writer.write(word)
+        currentLineLength += word.length
+    }
     for (line in File(inputName).readLines()) {
         if (line.isEmpty()) {
-            outputStream.newLine()
+            writer.newLine()
             if (currentLineLength > 0) {
-                outputStream.newLine()
+                writer.newLine()
                 currentLineLength = 0
             }
             continue
         }
-        for (word in line.split(" ")) {
-            if (currentLineLength > 0) {
-                if (word.length + currentLineLength >= lineLength) {
-                    outputStream.newLine()
-                    currentLineLength = 0
-                } else {
-                    outputStream.write(" ")
-                    currentLineLength++
-                }
-            }
-            outputStream.write(word)
-            currentLineLength += word.length
+        for (word in line.split(Regex("\\s+"))) {
+            append(word)
         }
     }
-    outputStream.close()
+    writer.close()
 }
 
 /**
@@ -132,6 +135,8 @@ fun alignFileByWidth(inputName: String, outputName: String) {
  *
  * Вернуть ассоциативный массив, содержащий 20 наиболее часто встречающихся слов с их количеством.
  * Если в тексте менее 20 различных слов, вернуть все слова.
+ * Вернуть ассоциативный массив с числом слов больше 20, если 20-е, 21-е, ..., последнее слова
+ * имеют одинаковое количество вхождений (см. также тест файла input/onegin.txt).
  *
  * Словом считается непрерывная последовательность из букв (кириллических,
  * либо латинских, без знаков препинания и цифр).
@@ -289,7 +294,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
  *     <li>Три</li>
  * </ul>
  *
- * Кроме того, весь текст целиком следует обернуть в теги <html><body>...</body></html>
+ * Кроме того, весь текст целиком следует обернуть в теги <html><body><p>...</p></body></html>
  *
  * Все остальные части исходного текста должны остаться неизменными с точностью до наборов пробелов и переносов строк.
  *
@@ -317,44 +322,42 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
 ///////////////////////////////начало файла/////////////////////////////////////////////////////////////////////////////
 <html>
   <body>
-    <ul>
-      <li>
-        Утка по-пекински
-        <ul>
-          <li>Утка</li>
-          <li>Соус</li>
-        </ul>
-      </li>
-      <li>
-        Салат Оливье
-        <ol>
-          <li>Мясо
-            <ul>
-              <li>
-                  Или колбаса
-              </li>
-            </ul>
-          </li>
-          <li>Майонез</li>
-          <li>Картофель</li>
-          <li>Что-то там ещё</li>
-        </ol>
-      </li>
-      <li>Помидоры</li>
-      <li>
-        Фрукты
-        <ol>
-          <li>Бананы</li>
-          <li>
-            Яблоки
-            <ol>
-              <li>Красные</li>
-              <li>Зелёные</li>
-            </ol>
-          </li>
-        </ol>
-      </li>
-    </ul>
+    <p>
+      <ul>
+        <li>
+          Утка по-пекински
+          <ul>
+            <li>Утка</li>
+            <li>Соус</li>
+          </ul>
+        </li>
+        <li>
+          Салат Оливье
+          <ol>
+            <li>Мясо
+              <ul>
+                <li>Или колбаса</li>
+              </ul>
+            </li>
+            <li>Майонез</li>
+            <li>Картофель</li>
+            <li>Что-то там ещё</li>
+          </ol>
+        </li>
+        <li>Помидоры</li>
+        <li>Фрукты
+          <ol>
+            <li>Бананы</li>
+            <li>Яблоки
+              <ol>
+                <li>Красные</li>
+                <li>Зелёные</li>
+              </ol>
+            </li>
+          </ol>
+        </li>
+      </ul>
+    </p>
   </body>
 </html>
 ///////////////////////////////конец файла//////////////////////////////////////////////////////////////////////////////

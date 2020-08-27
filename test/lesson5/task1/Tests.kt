@@ -86,16 +86,16 @@ class Tests {
     @Tag("Example")
     fun buildWordSet() {
         assertEquals(
-            buildWordSet("Я люблю Котлин".split(" ")),
-            mutableSetOf("Я", "люблю", "Котлин")
+            mutableSetOf("Я", "люблю", "Котлин"),
+            buildWordSet("Я люблю Котлин".split(" "))
         )
         assertEquals(
-            buildWordSet("Я люблю люблю Котлин".split(" ")),
-            mutableSetOf("Котлин", "люблю", "Я")
+            mutableSetOf("Котлин", "люблю", "Я"),
+            buildWordSet("Я люблю люблю Котлин".split(" "))
         )
         assertEquals(
-            buildWordSet(listOf()),
-            mutableSetOf<String>()
+            mutableSetOf<String>(),
+            buildWordSet(listOf())
         )
     }
 
@@ -131,13 +131,13 @@ class Tests {
         val from = mutableMapOf("a" to "z", "b" to "c")
 
         subtractOf(from, mapOf())
-        assertEquals(from, mapOf("a" to "z", "b" to "c"))
+        assertEquals(mapOf("a" to "z", "b" to "c"), from)
 
         subtractOf(from, mapOf("b" to "z"))
-        assertEquals(from, mapOf("a" to "z", "b" to "c"))
+        assertEquals(mapOf("a" to "z", "b" to "c"), from)
 
         subtractOf(from, mapOf("a" to "z"))
-        assertEquals(from, mapOf("b" to "c"))
+        assertEquals(mapOf("b" to "c"), from)
     }
 
     @Test
@@ -260,6 +260,8 @@ class Tests {
         assertFalse(hasAnagrams(emptyList()))
         assertTrue(hasAnagrams(listOf("рот", "свет", "тор")))
         assertFalse(hasAnagrams(listOf("рот", "свет", "код", "дверь")))
+        assertFalse(hasAnagrams(listOf("поле", "полено")))
+        assertTrue(hasAnagrams(listOf("лунь", "нуль")))
     }
 
     @Test
@@ -282,13 +284,18 @@ class Tests {
             mapOf(
                 "Marat" to setOf("Mikhail", "Sveta"),
                 "Sveta" to setOf("Marat", "Mikhail"),
-                "Mikhail" to setOf("Sveta", "Marat")
+                "Mikhail" to setOf("Sveta", "Marat"),
+                "Friend" to setOf("GoodGnome"),
+                "EvilGnome" to setOf(),
+                "GoodGnome" to setOf()
             ),
             propagateHandshakes(
                 mapOf(
                     "Marat" to setOf("Mikhail", "Sveta"),
                     "Sveta" to setOf("Marat"),
-                    "Mikhail" to setOf("Sveta")
+                    "Mikhail" to setOf("Sveta"),
+                    "Friend" to setOf("GoodGnome"),
+                    "EvilGnome" to setOf()
                 )
             )
         )
