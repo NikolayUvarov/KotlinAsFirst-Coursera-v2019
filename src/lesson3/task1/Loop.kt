@@ -12,7 +12,7 @@ import kotlin.math.sqrt
 fun factorial(n: Int): Double {
     var result = 1.0
     for (i in 1..n) {
-        result = result * i // Please do not fix in master
+        result *= i // Please do not fix in master
     }
     return result
 }
@@ -26,6 +26,7 @@ fun isPrime(n: Int): Boolean {
     if (n < 2) return false
     if (n == 2) return true
     if (n % 2 == 0) return false
+    //for (m in 3 until n step 2) {
     for (m in 3..sqrt(n.toDouble()).toInt() step 2) {
         if (n % m == 0) return false
     }
@@ -67,7 +68,15 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun digitNumber(n: Int): Int = TODO()
+fun digitNumber(n: Int): Int {
+    var count: Int = 0
+    var num = n
+    do {
+        count++
+        num = num / 10
+    } while (num > 0)
+    return count
+}
 
 /**
  * Простая
@@ -75,29 +84,68 @@ fun digitNumber(n: Int): Int = TODO()
  * Найти число Фибоначчи из ряда 1, 1, 2, 3, 5, 8, 13, 21, ... с номером n.
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
-fun fib(n: Int): Int = TODO()
+fun fib(n: Int): Int {
+    if (n == 1 || n == 2) return 1
+    var prev_prev_fib = 1
+    var prev_fib = 1
+    var res: Int = 0
+    for (i in 3..n) {
+        res = prev_fib + prev_prev_fib
+        prev_prev_fib = prev_fib
+        prev_fib = res
+    }
+    return res
+}
+
+fun fibreq(n: Int): Int {
+    if (n == 1 || n == 2) return 1
+    return fibreq(n - 1) + fibreq(n - 2)
+}
 
 /**
  * Простая
  *
  * Для заданных чисел m и n найти наименьшее общее кратное, то есть,
  * минимальное число k, которое делится и на m и на n без остатка
+ *
  */
-fun lcm(m: Int, n: Int): Int = TODO()
+fun maxCommonDivisor(a: Int, b: Int): Int {
+    var mya: Int = a
+    var myb: Int = b
+    while (mya != myb && myb > 0) {
+        if (mya > myb) mya = mya - myb
+        else myb = myb - mya
+    }
+    return mya
+}
+
+fun lcm(m: Int, n: Int): Int {
+    return m * n / maxCommonDivisor(m, n)
+}
 
 /**
  * Простая
  *
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
-fun minDivisor(n: Int): Int = TODO()
+fun minDivisor(n: Int): Int {
+    for (m in 2..sqrt(n.toDouble()).toInt()) {
+        if (n % m == 0) return m
+    }
+    return n
+}
 
 /**
  * Простая
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int = TODO()
+fun maxDivisor(n: Int): Int {
+    for (m in n / 2 downTo 1) {
+        if (n % m == 0) return m
+    }
+    return 1
+}
 
 /**
  * Простая
@@ -106,7 +154,14 @@ fun maxDivisor(n: Int): Int = TODO()
  * Взаимно простые числа не имеют общих делителей, кроме 1.
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
-fun isCoPrime(m: Int, n: Int): Boolean = TODO()
+fun isCoPrime(m: Int, n: Int): Boolean {
+    val smallest = if (m > n) m else n
+    //for (x in 2..sqrt(smallest.toFloat()).toInt()){
+    for (x in 2..smallest / 2) {
+        if (m % x == 0 && n % x == 0) return false
+    }
+    return true
+}
 
 /**
  * Простая
@@ -115,7 +170,12 @@ fun isCoPrime(m: Int, n: Int): Boolean = TODO()
  * то есть, существует ли такое целое k, что m <= k*k <= n.
  * Например, для интервала 21..28 21 <= 5*5 <= 28, а для интервала 51..61 квадрата не существует.
  */
-fun squareBetweenExists(m: Int, n: Int): Boolean = TODO()
+fun squareBetweenExists(m: Int, n: Int): Boolean {
+    for (x in 1..sqrt(n.toDouble()).toInt()) {
+        if (x * x in m..n) return true
+    }
+    return false
+}
 
 /**
  * Средняя
@@ -133,7 +193,19 @@ fun squareBetweenExists(m: Int, n: Int): Boolean = TODO()
  * Написать функцию, которая находит, сколько шагов требуется для
  * этого для какого-либо начального X > 0.
  */
-fun collatzSteps(x: Int): Int = TODO()
+fun collatzSteps(x: Int): Int {
+    var xS: Int = x
+    var count: Int = 0
+    while (xS > 1) {
+        count++
+        if (xS % 2 == 0) {
+            xS = xS / 2
+        } else {
+            xS = xS * 3 + 1
+        }
+    }
+    return count
+}
 
 /**
  * Средняя
@@ -144,7 +216,33 @@ fun collatzSteps(x: Int): Int = TODO()
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
-fun sin(x: Double, eps: Double): Double = TODO()
+fun powInt(x:Int, pow:Int){
+    
+}
+fun sin(x: Double, eps: Double): Double {
+    /*
+    var sinX: Double = 0.0
+    var K = 1
+    var step: Double = x
+    step = x - 2 * 3.115926535 * (x / (2 * 3.115926535)).toInt()
+    while (step > eps) {
+        sinX = sinX + step
+        K += 2
+        step = -step * x * x / (K * (K - 1))
+    }
+    */
+
+    var sinX: Double = 0
+    var K = 0
+    var step = x
+    var sign = 1
+    while (step > eps) {
+        sign = if (K % 2 == 0) 1 else -1
+        sinX =
+    }
+
+    return sinX
+}
 
 /**
  * Средняя

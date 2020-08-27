@@ -41,6 +41,13 @@ class Tests {
             }
         }
         assertEquals(78498, count)
+        count = 0
+        for (n in 2..10_000_000) {
+            if (isPrime(n)) {
+                count++
+            }
+        }
+        assertEquals(664579, count)
     }
 
     @Test
@@ -84,8 +91,25 @@ class Tests {
         assertEquals(102334155, fib(40))
         assertEquals(1134903170, fib(45))
         assertEquals(1836311903, fib(46))
+        assertEquals(8, fib(6))
+        assertEquals(55, fib(10))
+        assertEquals(832040, fib(30))
+
         // Just to calculate it
         fib(50)
+    }
+    @Test
+    @Tag("Easy")
+    fun fibreq() {
+        assertEquals(1, fibreq(1))
+        assertEquals(1, fibreq(2))
+        assertEquals(2, fibreq(3))
+        assertEquals(5, fibreq(5))
+        assertEquals(21, fibreq(8))
+        assertEquals(55, fibreq(10))
+        assertEquals(832040, fibreq(30))
+        assertEquals(102334155, fibreq(40))
+        assertEquals(1134903170, fibreq(45))
     }
 
     @Test
@@ -139,6 +163,20 @@ class Tests {
         assertFalse(isCoPrime(37, 111))
         assertTrue(isCoPrime(1234567890, 908765431))
         assertTrue(isCoPrime(2109876543, 1234567891))
+        var count = 0
+        for (n in 2..10_000) {
+            if (isCoPrime(n, n+1)) {
+                count++
+            }
+        }
+        assertEquals(9999, count)
+        count = 0
+        for (n in 2..10_000) {
+            if (isCoPrime(n, n+2)) {
+                count++
+            }
+        }
+        assertEquals(4999, count)
     }
 
     @Test
