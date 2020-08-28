@@ -2,6 +2,8 @@
 
 package lesson3.task1
 
+import ru.spbstu.ktuples.Tuple
+import kotlin.math.PI
 import kotlin.math.sqrt
 
 /**
@@ -216,9 +218,22 @@ fun collatzSteps(x: Int): Int {
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
-fun powInt(x:Int, pow:Int){
-    
+fun powInt(x: Double, pow: Int): Double {
+    var result = 1.0
+    if (pow == 0) return 0.0
+    if (pow > 0) {
+        for (i in 1..pow) {
+            result *= x
+        }
+    } else {
+        for (i in 1..pow) {
+            result /= x
+        }
+    }
+
+    return result
 }
+
 fun sin(x: Double, eps: Double): Double {
     /*
     var sinX: Double = 0.0
@@ -232,15 +247,19 @@ fun sin(x: Double, eps: Double): Double {
     }
     */
 
-    var sinX: Double = 0
+    var sinX: Double = 0.0
     var K = 0
     var step = x
+    //while (step > 2.0 * PI) {
+    step = x - 2.0 * PI * (x / (2.0 * PI)).toInt()
+    //}
     var sign = 1
     while (step > eps) {
         sign = if (K % 2 == 0) 1 else -1
-        sinX =
+        sinX += step * sign
+        K += 1
+        step = powInt(x, K * 2 + 1) / factorial(K * 2 + 1)
     }
-
     return sinX
 }
 
@@ -253,7 +272,20 @@ fun sin(x: Double, eps: Double): Double {
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.cos и другие стандартные реализации функции косинуса в этой задаче запрещается.
  */
-fun cos(x: Double, eps: Double): Double = TODO()
+fun cos(x: Double, eps: Double): Double {
+    var cosX: Double = 0.0
+    var K = 0
+    var step: Double = 1.0
+    var xMod = x - 2.0 * PI * (x / (2.0 * PI)).toInt()
+    var sign = 1
+    while (step > eps) {
+        sign = if (K % 2 == 0) 1 else -1
+        cosX += step * sign
+        K += 1
+        step = powInt(xMod, K * 2) / factorial(K * 2)
+    }
+    return cosX
+}
 
 /**
  * Средняя
@@ -262,7 +294,31 @@ fun cos(x: Double, eps: Double): Double = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun revert(n: Int): Int = TODO()
+fun revert(n: Int): Int {
+    var res = 0
+    var num = n
+    //if (num <= 9) return num
+    while (num > 0) {
+        res *= 10
+        res += num % 10
+        num = num / 10
+    }
+    return res
+}
+
+fun revertLen(n: Int): Pair<Int, Int> {
+    var res = 0
+    var num = n
+    //if (num <= 9) return num
+    var count = 0
+    while (num > 0) {
+        res *= 10
+        res += num % 10
+        num = num / 10
+        count++
+    }
+    return Pair(res, count)
+}
 
 /**
  * Средняя
@@ -273,7 +329,16 @@ fun revert(n: Int): Int = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun isPalindrome(n: Int): Boolean = TODO()
+fun isPalindrome(n: Int): Boolean {
+    var (revn, len) = revertLen(n)
+    var dirn = n
+    while (dirn > 0 && dirn > (len + 1 / 2)) {
+        if (revn % 10 != dirn % 10) return false
+        revn /= 10
+        dirn /= 10
+    }
+    return true
+}
 
 /**
  * Средняя
@@ -283,7 +348,19 @@ fun isPalindrome(n: Int): Boolean = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun hasDifferentDigits(n: Int): Boolean = TODO()
+fun hasDifferentDigits(n: Int): Boolean {
+    if (n < 10) return false
+    var num = n
+    var digFist = n % 10
+    var digSecond = n % 10
+    while (num > 10) {
+        num /= 10
+        digSecond = digFist
+        digFist = num % 10
+        if (digFist != digSecond) return true
+    }
+    return false
+}
 
 /**
  * Сложная
@@ -294,7 +371,49 @@ fun hasDifferentDigits(n: Int): Boolean = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun squareSequenceDigit(n: Int): Int = TODO()
+fun getLeftPow(n: Int): Pair<Int, Int> {
+    var res = 0
+    var num = n
+    //if (num <= 9) return num
+    var count = 0
+    while (num > 0) {
+        res *= 10
+        res = num % 10
+        num = num / 10
+        count++
+    }
+    var pow10 = 1
+    for (i in 2..count) {
+        pow10 *= 10
+    }
+    return Pair(res, pow10)
+}
+
+fun squareSequenceDigit(n: Int): Int {
+    var count = 1
+    var currN = 1
+    var currSqr = 1
+    var res: Int = -1
+    var pow: Int = 10
+    print("\n\n>RUN "); print(n);
+
+    while (count <= n&& currN <= n*2) {
+        currSqr = currN * currN
+        var tmpCurrSqr = currSqr
+        print("\ncurrN:"); print(currN); print(" currSqr:"); print(currSqr); println(" ")
+        while (tmpCurrSqr > 0) {
+            var (tmpres, tmppow) = getLeftPow(currSqr)
+            res = tmpres; pow = tmppow
+            print("("); print(count); print(") "); print(res); print("*"); print(pow); print("["); print(currSqr); print("] ")
+            if (count == n) return res
+            currSqr -= res * pow
+            tmpCurrSqr /= 10
+            count++
+        }
+        currN += 1
+    }
+    return res
+}
 
 /**
  * Сложная
@@ -305,4 +424,29 @@ fun squareSequenceDigit(n: Int): Int = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int = TODO()
+fun fibSequenceDigit(n: Int): Int {
+    var count = 1
+    var currN = 1
+    var currSqr = 1
+    var res: Int = -1
+    var pow: Int = 10
+    print("\n\n>RUN "); print(n);
+
+    while (count <= n&& currN <= n*2) {
+        currSqr = fib(currN)
+        var tmpCurrSqr = currSqr
+        print("\ncurrN:"); print(currN); print(" currSqr:"); print(currSqr); println(" ")
+        while (tmpCurrSqr > 0) {
+            var (tmpres, tmppow) = getLeftPow(currSqr)
+            res = tmpres; pow = tmppow
+            print("("); print(count); print(") "); print(res); print("*"); print(pow); print("["); print(currSqr); print("] ")
+            if (count == n) return res
+            currSqr -= res * pow
+            tmpCurrSqr /= 10
+            count++
+        }
+        currN += 1
+    }
+    return res
+
+}
